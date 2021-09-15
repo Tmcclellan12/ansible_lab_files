@@ -1,0 +1,52 @@
+
+#Retrive Hostname of Managed Nodes
+hostname
+
+#Prep managed nodes for key entry && run updates
+ssh ubuntu@<your IP> -i <keypairname.pem>
+sudo apt update -y
+sudo apt upgrade -y
+sudo nano ~/.ssh/authorized_keys
+
+#connect to controller node
+ssh ubuntu@<your IP> -i <keypairname.pem>
+
+#create ssh key file
+cd ~/.ssh
+ssh-keygen
+cat id_rsa.pub
+
+#install ansible on controller node && change directory to ansible config files
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install ansible -y
+cd /etc/ansible
+
+#setup ansible config files
+sudo nano hosts
+#add the following lines at the bottom
+[ubuntu]
+wn1 ansible_ssh_host=ip-172-31-89-229
+wn2 ansible_ssh_host=ip-172-31-84-237
+#these numeric values are my values. yours will be different 
+ctrl x
+y
+press enter to save
+
+#use ansible to ping two hosts from controller node
+ansible -m ping all
+
+#install cowsay && run command
+ansible ubuntu -a "sudo apt install cowsay"
+ansible ubuntu -a "cowsay I love Ansible"
+
+#create ansible yml file on controller node
+sudo nano playbook.yml
+#past the code from the GitHub file into this window
+ctrl x
+y
+press enter to save
+
+#execute playbook
+ansible-playbook playbook.yml
+
